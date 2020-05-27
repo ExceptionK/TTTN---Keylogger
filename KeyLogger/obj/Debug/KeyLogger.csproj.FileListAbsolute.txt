@@ -1,0 +1,7 @@
+C:\Users\Exception K\source\repos\KeyLogger\KeyLogger\bin\Debug\KeyLogger.exe.config
+C:\Users\Exception K\source\repos\KeyLogger\KeyLogger\bin\Debug\KeyLogger.exe
+C:\Users\Exception K\source\repos\KeyLogger\KeyLogger\bin\Debug\KeyLogger.pdb
+C:\Users\Exception K\source\repos\KeyLogger\KeyLogger\obj\Debug\KeyLogger.csprojAssemblyReference.cache
+C:\Users\Exception K\source\repos\KeyLogger\KeyLogger\obj\Debug\KeyLogger.csproj.CoreCompileInputs.cache
+C:\Users\Exception K\source\repos\KeyLogger\KeyLogger\obj\Debug\KeyLogger.exe
+C:\Users\Exception K\source\repos\KeyLogger\KeyLogger\obj\Debug\KeyLogger.pdb
